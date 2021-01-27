@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  email     String   @unique
+  password  String
+  role      UserRole @default(USER)
+  company   Company?
+  profiles  Profile?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map(name: "users")
+}
+
+model Profile {
+  id        String   @id @default(uuid())
+  address   String?
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map(name: "profiles")
+}
+
+model Company {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  address   String?
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  projects  Project[]
+  experts   Expert[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map(name: "companies")
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  title     String   @unique
+  location  String?
+  finished  Boolean  @default(false)
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map(name: "projects")
+}
+
+model Expert {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  Company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map(name: "experts")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPERADMIN
+}
