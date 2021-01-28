@@ -6,7 +6,8 @@ const prisma = new PrismaClient()
 export const get = async (req: Request, res: Response, next: NextFunction) => {
     const company = await prisma.company.findMany({
         include: {
-            user: true
+            user: true,
+            projects: true
         }
     })
     return res.status(200).json(company)
