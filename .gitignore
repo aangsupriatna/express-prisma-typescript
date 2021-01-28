@@ -1,4 +1,4 @@
 node_modules/
 build/
-migrations/
+**/prisma/migrations/
 *.lock
