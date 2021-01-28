@@ -1,11 +1,11 @@
 import express from 'express'
 const router = express.Router();
-import project from '../controller/ProjectController'
+import { get, store, show, update, destroy } from '../controller/ProjectController'
 
-router.get('/', project.get);
-router.post('/', project.store);
-router.get('/:id', project.show);
-router.put('/:id', project.update);
-router.delete('/:id', project.destroy);
+router.get('/', get);
+router.post('/', store);
+router.get('/:id', show);
+router.put('/:id', update);
+router.delete('/:id', destroy);
 
 export default router

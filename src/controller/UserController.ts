@@ -4,14 +4,15 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 // CRUD here
-async function get(req: Request, res: Response, next: NextFunction) {
+
+export const get = async (req: Request, res: Response, next: NextFunction) => {
     const user = await prisma.user.findMany({
         include: { company: true }
     })
     return res.status(200).json(user)
 }
 
-async function store(req: Request, res: Response, next: NextFunction) {
+export const store = async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, password } = req.body
     const user = await prisma.user.create({
         data: {
@@ -23,7 +24,7 @@ async function store(req: Request, res: Response, next: NextFunction) {
     return res.status(200).json(user)
 }
 
-async function show(req: Request, res: Response, next: NextFunction) {
+export const show = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
     const user = await prisma.user.findUnique({
         where: {
@@ -36,7 +37,7 @@ async function show(req: Request, res: Response, next: NextFunction) {
     return res.status(200).json(user)
 }
 
-async function update(req: Request, res: Response, next: NextFunction) {
+export const update = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
     const { name, email, password, role } = req.body
     const user = await prisma.user.update({
@@ -53,7 +54,7 @@ async function update(req: Request, res: Response, next: NextFunction) {
     return res.status(200).json(user)
 }
 
-async function destroy(req: Request, res: Response, next: NextFunction) {
+export const destroy = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
     const result = await prisma.user.delete({
         where: {
@@ -61,12 +62,4 @@ async function destroy(req: Request, res: Response, next: NextFunction) {
         }
     })
     return res.status(200).json(result)
-}
-
-export default {
-    get,
-    store,
-    show,
-    update,
-    destroy
 }
