@@ -1,11 +1,12 @@
 import express from 'express'
-const router = express.Router();
+import { isAuthorized } from '../middleware/auth'
 import { get, store, show, update, destroy } from '../controller/CompanyController'
+const router = express.Router();
 
 router.get('/', get);
-router.post('/', store);
+router.post('/', isAuthorized, store);
 router.get('/:id', show);
-router.put('/:id', update);
-router.delete('/:id', destroy);
+router.put('/:id', isAuthorized, update);
+router.delete('/:id', isAuthorized, destroy);
 
 export default router
