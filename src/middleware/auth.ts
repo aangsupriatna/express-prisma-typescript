@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
 
 interface RequestWithUser extends Request {
     user?: any
@@ -12,10 +14,22 @@ export const isAuth = async (req: RequestWithUser, res: Response, next: NextFunc
         return res.status(401).json({ 'message': 'You need to signin!' })
     }
 
-    await jwt.verify(token, 'topsecret', (error: any, decode: any) => {
+    const validToken = await prisma.token.findFirst({
+        where: {
+            code: token
+        }
+    })
+
+    if (!validToken) {
+        return res.status(401).json({ 'message': 'Token not valid, you need to signin' })
+    }
+    const tokenCode = validToken.code
+
+    await jwt.verify(tokenCode, 'topsecret', (error: any, decode: any) => {
         if (error) {
             return res.status(400).json(error)
         } else {
+            console.log(decode)
             req.user = decode
         }
     })

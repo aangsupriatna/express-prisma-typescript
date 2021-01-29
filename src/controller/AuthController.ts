@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client'
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client'
@@ -18,11 +17,25 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
             return res.status(400).json({ message: 'Wrong email or password' })
         }
         const token = jwt.sign({ email: user.email, role: user.role }, 'topsecret', { expiresIn: '1Y' })
+
+        const saveToken = await prisma.token.create({
+            data: {
+                code: token
+            }
+        })
         res.cookie('token', token, { secure: false, httpOnly: true })
 
-        return res.status(200).json(user)
+        return res.status(200).json(saveToken)
     } catch (error) {
         return res.status(400).json(error)
     }
+}
 
+export const signOut = async (req: Request, res: Response, next: NextFunction) => {
+    const delToken = await prisma.token.delete({
+        where: {
+            code: req.cookies.token
+        }
+    })
+    res.status(200).json(delToken)
 }
