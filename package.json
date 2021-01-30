@@ -18,13 +18,15 @@
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "helmet": "^4.4.1",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.2"
   },
   "devDependencies": {
     "@prisma/cli": "2.15.0",
     "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.11",
     "@types/jsonwebtoken": "^8.5.0",
+    "@types/multer": "^1.4.5",
     "@types/node": "^14.14.22",
     "express-validator": "^6.9.2",
     "nodemon": "^2.0.7",

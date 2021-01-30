@@ -43,3 +43,7 @@ export const isAuthorized = (req: RequestWithUser, res: Response, next: NextFunc
         return res.status(401).json({ 'message': 'User not authorized' })
     }
 }
+
+export const whoami = (req: RequestWithUser, res: Response, next: NextFunction) => {
+    return res.status(200).json(req.user)
+}

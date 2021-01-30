@@ -14,6 +14,7 @@ export const get = async (req: Request, res: Response, next: NextFunction) => {
 
 export const store = async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, password } = req.body
+    console.log(req.file)
     const user = await prisma.user.create({
         data: {
             name,
