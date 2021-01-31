@@ -25,19 +25,28 @@ export const isAuth = async (req: RequestWithUser, res: Response, next: NextFunc
     }
     const tokenCode = validToken.code
 
-    await jwt.verify(tokenCode, 'topsecret', (error: any, decode: any) => {
+    await jwt.verify(tokenCode, 'topsecret', async (error: any, decode: any) => {
         if (error) {
             return res.status(400).json(error)
         } else {
-            console.log(decode)
-            req.user = decode
+            const validUser = await prisma.user.findUnique({
+                where: {
+                    email: decode.email
+                },
+                select: {
+                    email: true,
+                    role: true
+                }
+            })
+
+            req.user = validUser
         }
     })
     next()
 }
 
 export const isAuthorized = (req: RequestWithUser, res: Response, next: NextFunction) => {
-    if (req.user.role == 'ADMIN') {
+    if (req.user.role == 'ADMIN' || req.user.role == 'SUPERADMIN') {
         next()
     } else {
         return res.status(401).json({ 'message': 'User not authorized' })

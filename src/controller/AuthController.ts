@@ -1,23 +1,27 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 export const signIn = async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body
+    let { email, password } = req.body
 
     try {
-        const user = await prisma.user.findFirst({
+        const user = await prisma.user.findUnique({
             where: {
-                email: email,
-                password: password
+                email: email
             }
         })
         if (!user) {
-            return res.status(400).json({ message: 'Wrong email or password' })
+            return res.status(400).json({ message: 'User not found' })
         }
-        const token = jwt.sign({ email: user.email, role: user.role }, 'topsecret', { expiresIn: '1Y' })
+        const validPassword = bcrypt.compareSync(password, user.password)
+        if (!validPassword) {
+            return res.status(401).json({ message: 'Wrong password' })
+        }
 
+        const token = jwt.sign({ email: user.email }, 'topsecret', { expiresIn: '1d' })
         const saveToken = await prisma.token.create({
             data: {
                 code: token

@@ -14,7 +14,7 @@ export const get = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 export const store = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, address, userId } = req.body
+    let { name, address, userId } = req.body
     const company = await prisma.company.create({
         data: {
             name,
@@ -40,7 +40,7 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
 
 export const update = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
-    const { name, address, userId } = req.body
+    let { name, address, userId } = req.body
     const company = await prisma.company.update({
         where: {
             id: id
