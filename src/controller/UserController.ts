@@ -8,21 +8,42 @@ const prisma = new PrismaClient()
 
 export const get = async (req: Request, res: Response, next: NextFunction) => {
     const user = await prisma.user.findMany({
-        include: { company: true }
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            profile: {
+                select: {
+                    address: true
+                }
+            },
+            company: {
+                select: {
+                    name: true,
+                    address: true
+                }
+            }
+        }
     })
     return res.status(200).json(user)
 }
 
 export const store = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, email, password } = req.body
+    let { name, email, password } = req.body
     console.log(req.file)
 
     const hashPwd = await bcrypt.hashSync(password, 10)
+    password = hashPwd
     const user = await prisma.user.create({
         data: {
             name,
             email,
-            password: hashPwd
+            password
+        },
+        select: {
+            name: true,
+            email: true
         }
     })
     return res.status(200).json(user)
@@ -34,8 +55,22 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
         where: {
             id: id
         },
-        include: {
-            company: true
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            profile: {
+                select: {
+                    address: true
+                }
+            },
+            company: {
+                select: {
+                    name: true,
+                    address: true
+                }
+            }
         }
     })
     return res.status(200).json(user)
@@ -43,7 +78,7 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
 
 export const update = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
-    let { name, email, password, role } = req.body
+    let { name, email, password, role, address } = req.body
 
     if (password) {
         const hashPwd = await bcrypt.hashSync(password, 10)
@@ -57,7 +92,13 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
             name,
             email,
             password,
-            role
+            role,
+            profile: {
+                upsert: {
+                    create: { address: address },
+                    update: { address: address }
+                }
+            }
         }
     })
     return res.status(200).json(user)
