@@ -8,40 +8,44 @@ interface RequestWithUser extends Request {
 }
 
 export const isAuth = async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const token = req.cookies.token
+    try {
+        const token = req.cookies.token
 
-    if (!token) {
-        return res.status(401).json({ 'message': 'You need to signin!' })
-    }
-
-    const validToken = await prisma.token.findFirst({
-        where: {
-            code: token
+        if (!token) {
+            return res.status(401).json({ 'message': 'You need to signin!' })
         }
-    })
 
-    if (!validToken) {
-        return res.status(401).json({ 'message': 'Token not valid, you need to signin' })
-    }
-    const tokenCode = validToken.code
-    const secretKey: any = process.env.APP_SECRET
-    await jwt.verify(tokenCode, secretKey, async (error: any, decode: any) => {
-        if (error) {
-            return res.status(400).json(error)
-        } else {
-            const validUser = await prisma.user.findUnique({
-                where: {
-                    email: decode.email
-                },
-                select: {
-                    email: true,
-                    role: true
-                }
-            })
+        const validToken = await prisma.token.findFirst({
+            where: {
+                code: token
+            }
+        })
 
-            req.user = validUser
+        if (!validToken) {
+            return res.status(401).json({ 'message': 'Token not valid, you need to signin' })
         }
-    })
+        const tokenCode = validToken.code
+        const secretKey: any = process.env.APP_SECRET
+        await jwt.verify(tokenCode, secretKey, async (error: any, decode: any) => {
+            if (error) {
+                return res.status(400).json(error)
+            } else {
+                const validUser = await prisma.user.findUnique({
+                    where: {
+                        email: decode.email
+                    },
+                    select: {
+                        email: true,
+                        role: true
+                    }
+                })
+
+                req.user = validUser
+            }
+        })
+    } catch (error) {
+        return res.status(401).json(error)
+    }
     next()
 }
 

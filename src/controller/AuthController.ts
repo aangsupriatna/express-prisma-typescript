@@ -37,10 +37,15 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
 }
 
 export const signOut = async (req: Request, res: Response, next: NextFunction) => {
-    const delToken = await prisma.token.delete({
-        where: {
-            code: req.cookies.token
-        }
-    })
-    res.status(200).json(delToken)
+    try {
+        const delToken = await prisma.token.delete({
+            where: {
+                code: req.cookies.token
+            }
+        })
+        res.status(200).json(delToken)
+
+    } catch (error) {
+        return res.status(401).json({ error })
+    }
 }

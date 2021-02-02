@@ -5,12 +5,10 @@ const prisma = new PrismaClient()
 
 export const get = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const project = await prisma.project.findMany({
+        const expert = await prisma.expert.findMany({
             select: {
                 id: true,
-                title: true,
-                location: true,
-                finished: true,
+                name: true,
                 company: {
                     select: {
                         id: true,
@@ -20,23 +18,22 @@ export const get = async (req: Request, res: Response, next: NextFunction) => {
                 }
             }
         })
-        return res.status(200).json(project)
+        return res.status(200).json(expert)
     } catch (error) {
         return res.status(401).json(error)
     }
 }
 
 export const store = async (req: Request, res: Response, next: NextFunction) => {
-    let { title, location, companyId } = req.body
+    let { name, companyId } = req.body
     try {
-        const project = await prisma.project.create({
+        const expert = await prisma.expert.create({
             data: {
-                title,
-                location,
+                name,
                 companyId
             }
         })
-        return res.status(200).json(project)
+        return res.status(200).json(expert)
     } catch (error) {
         return res.status(401).json(error)
     }
@@ -45,15 +42,13 @@ export const store = async (req: Request, res: Response, next: NextFunction) => 
 export const show = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
     try {
-        const project = await prisma.project.findUnique({
+        const expert = await prisma.expert.findUnique({
             where: {
                 id: id
             },
             select: {
                 id: true,
-                title: true,
-                location: true,
-                finished: true,
+                name: true,
                 company: {
                     select: {
                         id: true,
@@ -63,7 +58,7 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
                 }
             }
         })
-        return res.status(200).json(project)
+        return res.status(200).json(expert)
     } catch (error) {
         return res.status(401).json(error)
     }
@@ -72,19 +67,17 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
 export const update = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
     try {
-        let { title, location, companyId, finished } = req.body
-        const project = await prisma.project.update({
+        let { name, companyId } = req.body
+        const expert = await prisma.expert.update({
             where: {
                 id: id
             },
             data: {
-                title,
-                location,
-                companyId,
-                finished
+                name,
+                companyId
             }
         })
-        return res.status(200).json(project)
+        return res.status(200).json(expert)
     } catch (error) {
         return res.status(401).json(error)
     }
@@ -93,7 +86,7 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
 export const destroy = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
     try {
-        const result = await prisma.project.delete({
+        const result = await prisma.expert.delete({
             where: {
                 id: id
             }
