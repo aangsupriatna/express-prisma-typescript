@@ -24,8 +24,8 @@ export const isAuth = async (req: RequestWithUser, res: Response, next: NextFunc
         return res.status(401).json({ 'message': 'Token not valid, you need to signin' })
     }
     const tokenCode = validToken.code
-
-    await jwt.verify(tokenCode, 'topsecret', async (error: any, decode: any) => {
+    const secretKey: any = process.env.APP_SECRET
+    await jwt.verify(tokenCode, secretKey, async (error: any, decode: any) => {
         if (error) {
             return res.status(400).json(error)
         } else {

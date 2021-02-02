@@ -80,28 +80,33 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
     const id = req.params.id
     let { name, email, password, role, address } = req.body
 
-    if (password) {
-        const hashPwd = await bcrypt.hashSync(password, 10)
-        password = hashPwd
-    }
-    const user = await prisma.user.update({
-        where: {
-            id: id
-        },
-        data: {
-            name,
-            email,
-            password,
-            role,
-            profile: {
-                upsert: {
-                    create: { address: address },
-                    update: { address: address }
+    try {
+        if (password) {
+            const hashPwd = await bcrypt.hashSync(password, 10)
+            password = hashPwd
+        }
+        const user = await prisma.user.update({
+            where: {
+                id: id
+            },
+            data: {
+                name,
+                email,
+                password,
+                role,
+                profile: {
+                    upsert: {
+                        create: { address: address },
+                        update: { address: address }
+                    }
                 }
             }
-        }
-    })
-    return res.status(200).json(user)
+        })
+        return res.status(200).json(user)
+
+    } catch (error) {
+        return res.status(401).json(error)
+    }
 }
 
 export const destroy = async (req: Request, res: Response, next: NextFunction) => {

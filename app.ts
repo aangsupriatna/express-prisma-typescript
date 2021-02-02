@@ -2,9 +2,12 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
+import { config } from 'dotenv'
 import routes from './src/routes'
 
 const app = express()
+
+config()
 
 app.disable('x-powered-by');
 

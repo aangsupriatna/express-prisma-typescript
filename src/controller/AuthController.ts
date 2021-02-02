@@ -21,7 +21,8 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
             return res.status(401).json({ message: 'Wrong password' })
         }
 
-        const token = jwt.sign({ email: user.email }, 'topsecret', { expiresIn: '1d' })
+        const secretKey: any = process.env.APP_SECRET
+        const token = jwt.sign({ email: user.email }, secretKey, { expiresIn: '1d' })
         const saveToken = await prisma.token.create({
             data: {
                 code: token
