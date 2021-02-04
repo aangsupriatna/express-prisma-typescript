@@ -8,7 +8,7 @@ import moment from 'moment'
 const prisma = new PrismaClient()
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET }: any = process.env
 
-const createAccesToken = async (userid: string, email: string) => {
+export const createAccesToken = async (userid: string, email: string) => {
     const jwtid = uuidv4()
     const accessToken = await jwt.sign(
         { user: { userid, email } },
@@ -19,7 +19,7 @@ const createAccesToken = async (userid: string, email: string) => {
     return { accessToken, refreshToken }
 }
 
-const createRefreshToken = async (userid: string, jwtid: string) => {
+export const createRefreshToken = async (userid: string, jwtid: string) => {
     let refreshToken = await prisma.token.create({
         data: {
             userId: userid,
