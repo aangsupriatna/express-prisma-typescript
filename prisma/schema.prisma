@@ -11,9 +11,17 @@ generator client {
 }
 
 model Token {
-  id        String   @id @default(uuid())
-  code      String   @unique
-  createdAt DateTime @default(now()) @map("created_at")
+  id          String   @id @default(uuid())
+  jwtId       String   @unique
+  used        Boolean  @default(false)
+  invalidated Boolean  @default(false)
+  expiredDate DateTime
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map(name: "tokens")
 }
 
 model User {
@@ -25,6 +33,7 @@ model User {
   profile   Profile?
   company   Company? @relation(fields: [companyId], references: [id])
   companyId String?
+  token     Token[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

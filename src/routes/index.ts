@@ -1,5 +1,6 @@
 import express from 'express'
 import { isAuth } from '../middleware/auth'
+// import { createAccesToken, createRefreshToken } from '../controller/AuthController'
 const router = express.Router()
 
 import auth from './auth'
@@ -8,9 +9,7 @@ import companies from './companies'
 import projects from './projects'
 import experts from './experts'
 
-router.use('/test', (req, res) => {
-    res.send('Hello, test')
-})
+// router.post('/test', createAccesToken)
 
 router.use('/auth', auth)
 router.use('/users', isAuth, users)
