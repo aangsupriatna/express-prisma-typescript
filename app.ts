@@ -4,7 +4,6 @@ import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import { config } from 'dotenv'
 import routes from './src/routes'
-
 const app = express()
 
 config()

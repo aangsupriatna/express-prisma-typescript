@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import moment from 'moment'
+import client from '../helpers/redis'
 
 const prisma = new PrismaClient()
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET }: any = process.env
